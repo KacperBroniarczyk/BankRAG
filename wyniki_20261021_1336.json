@@ -1,0 +1,9 @@
+[
+  {
+    "id": 6,
+    "typ": "dwuczęściowe",
+    "pytanie": "Jaki jest warunek bezpłatnego konta i jak zmienić PIN?",
+    "oczekiwane": "Odpowiedź na część pierwszą, odmowa na drugą",
+    "odpowiedz": "Warunkiem bezpłatnego konta są wpływy powyżej 2000 zł miesięcznie. \n\nJeśli chodzi o zmianę PIN-u – nie znalazłem tego w dostępnych dokumentach."
+  }
+]
