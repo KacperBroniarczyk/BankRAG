@@ -32,16 +32,6 @@ def zapytaj(pytanie):
     )
     return response.text
 
-
-# while True:
-#     zapytanie=input("Użytkownik: ")
-#     if zapytanie=="stop":
-#         break
-#     print(f"AI: {zapytaj(zapytanie)}")
-
-
-
-
 import time
 from google.genai import errors
 
@@ -51,7 +41,7 @@ def zapytaj_z_ponowieniem(pytanie, proby=5):
             return zapytaj(pytanie)
         except errors.APIError as e:
             if e.code in (429, 503) and i < proby - 1:
-                time.sleep(2 ** i)   # czeka 1, 2, 4, 8 s
+                time.sleep(2 ** i)
             else:
                 raise
 

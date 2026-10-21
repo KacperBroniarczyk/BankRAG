@@ -82,4 +82,4 @@ bez informacji spoza tekstu.
 - Jak mierzyć jakość odpowiedzi na większej liczbie pytań (np. odsetek poprawnych, zestaw 30+ pytań)?
 - Jak dzielić długie dokumenty na fragmenty (RAG)?
 - Jak zachowa się asystent, gdy dokumenty są ze sobą sprzeczne?
-- Jak zapewnić zgodność z RODO i AI Act przy użyciu w prawdziwym banku?
+- Jak zapewnić zgodność z RODO i AI Act przy użyciu w prawdziwym banku? 

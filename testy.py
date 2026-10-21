@@ -45,8 +45,7 @@ for t in TESTY:
         odpowiedz = f"BŁĄD: {e}"
     print(f"\n[{t['id']}] {t['typ']}\nPytanie: {t['pytanie']}\nOdpowiedź: {odpowiedz}")
     wyniki.append({**t, "odpowiedz": odpowiedz})
-    time.sleep(2)   # przerwa, żeby nie przekroczyć limitu zapytań
-
+    time.sleep(2)
 nazwa = f"wyniki_{datetime.now():%Y%m%d_%H%M}.json"
 with open(nazwa, "w", encoding="utf-8") as f:
     json.dump(wyniki, f, ensure_ascii=False, indent=2)
