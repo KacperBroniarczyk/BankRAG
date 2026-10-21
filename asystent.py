@@ -1,17 +1,19 @@
 import os
+import time
 from dotenv import load_dotenv
 from certifi import contents
 from google import genai
-from google.genai import types
+from google.genai import types, errors
 
 load_dotenv()
 client=genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-MODEL="gemini-3.8-flash"
+MODEL="gemini-3.5-flash"
 
 SYSTEM=(
     "Jesteś asystentem pracowników banku. Odpowiadaj wyłącznie na podstawie podanego "
     "fragmentu regulaminu. Jeśli odpowiedzi nie ma we fragmencie, napisz 'Nie znalazłem tego "
-    "w dostępnych dokumentach'"
+    "w dostępnych dokumentach'. Jeśli pytanie którę Ci zadano nie jest poprawnie sformułowane postaraj się je naprostowac "
+    "i odpowiedzieć na bazie podanego fragmentu."
 )
 
 KONTEKST=(
@@ -32,9 +34,6 @@ def zapytaj(pytanie):
     )
     return response.text
 
-import time
-from google.genai import errors
-
 def zapytaj_z_ponowieniem(pytanie, proby=5):
     for i in range(proby):
         try:
@@ -44,4 +43,3 @@ def zapytaj_z_ponowieniem(pytanie, proby=5):
                 time.sleep(2 ** i)
             else:
                 raise
-
