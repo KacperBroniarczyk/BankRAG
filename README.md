@@ -226,9 +226,13 @@ Ten sam kod działa z Gemini API (klucz z AI Studio) albo z Vertex AI. Przełąc
 ```
 GOOGLE_GENAI_USE_VERTEXAI=true
 GOOGLE_CLOUD_PROJECT=id-projektu
-GOOGLE_CLOUD_LOCATION=europe-central2
+GOOGLE_CLOUD_LOCATION=europe-west3
 ```
-Na Vertex AI nie ma klucza API: uwierzytelnia konto usługi (lokalnie `gcloud auth application-default login`), a dane zostają w wybranym regionie UE. Embeddingi są liczone tym samym modelem (`gemini-embedding-001`), więc gotowy `embeddingi.json` powinien pasować bez przeliczania (do sprawdzenia przy pierwszym uruchomieniu: podobieństwa w `ocena.py` powinny wyjść takie same).
+Na Vertex AI nie ma klucza API: uwierzytelnia konto usługi (lokalnie `gcloud auth application-default login`), a dane zostają w wybranym regionie UE. Embeddingi są liczone tym samym modelem (`gemini-embedding-001`), więc gotowy `embeddingi.json` pasuje bez przeliczania (sprawdzone 29.10: te same podobieństwa co w AI Studio, np. 0.815 / 0.783 / 0.76 dla pytania „Kto może dysponować pieniędzmi na koncie?”).
+
+Region `europe-west3` (Frankfurt), bo w `europe-central2` (Warszawa) nie ma `gemini-3.5-flash` (sprawdzone 29.10; w Warszawie jest tylko model embeddingów).
+
+Na komputerze z antywirusem skanującym HTTPS `gcloud` może zgłaszać `CERTIFICATE_VERIFY_FAILED`. Pomaga wskazanie pliku z certyfikatami z Windows: `gcloud config set core/custom_ca_certs_file <ścieżka do pliku .pem>`.
 
 Test obrazu lokalnie przed wdrożeniem (z kluczem z `.env`, aplikacja na http://localhost:8080):
 ```bash
@@ -239,7 +243,7 @@ Obraz zawiera tylko kod i gotowy indeks, bez `.env` i PDF (sprawdzone 29.10).
 
 Wdrożenie na Cloud Run (z katalogu projektu, po zbudowaniu indeksu):
 ```bash
-gcloud run deploy bankrag --source . --region europe-central2 --no-allow-unauthenticated --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=id-projektu,GOOGLE_CLOUD_LOCATION=europe-central2
+gcloud run deploy bankrag --source . --region europe-west3 --no-allow-unauthenticated --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=id-projektu,GOOGLE_CLOUD_LOCATION=europe-west3
 ```
 - `--no-allow-unauthenticated`: aplikacja nie jest publiczna, dostęp tylko dla zalogowanych kont z uprawnieniem.
 - `.gcloudignore` jest potrzebny, bo bez niego `gcloud` użyłby `.gitignore` i nie wysłałby `fragmenty.json` i `embeddingi.json`. `.env` i PDF nie są wysyłane.
