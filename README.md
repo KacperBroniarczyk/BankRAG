@@ -215,7 +215,7 @@ Pełny dziennik decyzji, wyników testów i ryzyk: [`dane/decyzje_i_ryzyka.md`](
 - [x] Interfejs Streamlit
 - [x] Zbiór 20 pytań testowych, miary hit@1 / hit@3 / hit@5, kalibracja progu
 - [x] Testy asystenta: pytania spoza dokumentu, z fałszywym założeniem, z liczbami
-- [x] Kod przygotowany pod Vertex AI i Cloud Run (`Dockerfile`, przełącznik w `.env`)
+- [x] Kod przygotowany pod Vertex AI i Cloud Run (`Dockerfile` sprawdzony lokalnie, przełącznik w `.env`)
 - [ ] Wdrożenie na Cloud Run (wymaga projektu GCP z rozliczeniami)
 - [x] Dokumentacja biznesowa: mapa procesu as-is / to-be, metryki sukcesu (`dokumenty/`, szkic do weryfikacji)
 - [ ] Więcej dokumentów (taryfa, załączniki do regulaminu) z datą obowiązywania przy każdym źródle
@@ -229,6 +229,13 @@ GOOGLE_CLOUD_PROJECT=id-projektu
 GOOGLE_CLOUD_LOCATION=europe-central2
 ```
 Na Vertex AI nie ma klucza API: uwierzytelnia konto usługi (lokalnie `gcloud auth application-default login`), a dane zostają w wybranym regionie UE. Embeddingi są liczone tym samym modelem (`gemini-embedding-001`), więc gotowy `embeddingi.json` powinien pasować bez przeliczania (do sprawdzenia przy pierwszym uruchomieniu: podobieństwa w `ocena.py` powinny wyjść takie same).
+
+Test obrazu lokalnie przed wdrożeniem (z kluczem z `.env`, aplikacja na http://localhost:8080):
+```bash
+docker build -t bankrag .
+docker run --rm -p 8080:8080 --env-file .env bankrag
+```
+Obraz zawiera tylko kod i gotowy indeks, bez `.env` i PDF (sprawdzone 29.10).
 
 Wdrożenie na Cloud Run (z katalogu projektu, po zbudowaniu indeksu):
 ```bash

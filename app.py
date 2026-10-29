@@ -8,6 +8,8 @@ try:
 except ImportError:
     pass
 
+from google.genai import errors
+
 from asystent import K, ODMOWA, PROG, odpowiedz, wczytaj_indeks
 
 st.set_page_config(page_title="BankRAG", page_icon="🏦")
@@ -75,6 +77,13 @@ if pytanie:
         with st.spinner("Szukam w regulaminie..."):
             try:
                 wynik = odpowiedz(pytanie, fragmenty, macierz, prog=prog, k=k)
+            except errors.APIError as e:
+                # 429 = limit zapytań, pokazuję krótki komunikat zamiast całego JSON-a z API
+                if e.code == 429:
+                    st.error("Wyczerpany limit zapytań do API (darmowy plan). Spróbuj później.")
+                else:
+                    st.error(f"Błąd API: {e.code} {e.status}")
+                st.stop()
             except Exception as e:
                 st.error(f"Błąd API: {e}")
                 st.stop()
