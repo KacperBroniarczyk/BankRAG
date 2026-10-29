@@ -1,45 +1,90 @@
-import os
-import time
-from dotenv import load_dotenv
-from certifi import contents
-from google import genai
-from google.genai import types, errors
+import json
+from pathlib import Path
 
-load_dotenv()
-client=genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-MODEL="gemini-3.5-flash"
+from google.genai import types
 
-SYSTEM=(
-    "Jesteś asystentem pracowników banku. Odpowiadaj wyłącznie na podstawie podanego "
-    "fragmentu regulaminu. Jeśli odpowiedzi nie ma we fragmencie, napisz 'Nie znalazłem tego "
-    "w dostępnych dokumentach'. Jeśli pytanie którę Ci zadano nie jest poprawnie sformułowane postaraj się je naprostowac "
-    "i odpowiedzieć na bazie podanego fragmentu."
+from embedding import embed_pytanie, klient, normalizuj_wektory, szukaj, wczytaj_cache, z_ponawianiem
+
+KATALOG = Path(__file__).parent
+MODEL_GEN = "gemini-3.5-flash"
+PROG = 0.6
+K = 3
+ODMOWA = "Nie znalazłem odpowiedzi na to pytanie w regulaminie."
+
+SYSTEM = (
+    "Jesteś asystentem pracownika banku. Odpowiadasz wyłącznie na podstawie "
+    "podanych fragmentów regulaminu. Przy każdej informacji podaj numer strony "
+    "w formacie (str. X). Jeśli fragmenty nie zawierają odpowiedzi, napisz dokładnie: "
+    f"\"{ODMOWA}\" i nic więcej nie dodawaj. Odpowiadaj krótko i po polsku."
 )
 
-KONTEKST=(
-        "Dzienny limit przelewów wynosi 10 000 zł. Infolinia banku działa od poniedziałku do piątku w godzinach 8:00–18:00. "
-        "Bank rozpatruje reklamacje w ciągu 14 dni roboczych. Z usług banku mogą korzystać tylko osoby pełnoletnie. "
-        "Konto jest bezpłatne przy wpływach powyżej 2000 zł miesięcznie. Zgubioną lub skradzioną kartę należy natychmiast zablokować w aplikacji. "
-        "Sesja w bankowości internetowej wygasa po 5 minutach braku aktywności. Rozwiązanie umowy o konto wymaga miesięcznego okresu wypowiedzenia."
+
+def wczytaj_indeks(sciezka_fragmentow=KATALOG / "fragmenty.json", sciezka_cache=KATALOG / "embeddingi.json"):
+    with open(sciezka_fragmentow, "r", encoding="utf-8") as plik:
+        fragmenty = json.load(plik)
+    cache = wczytaj_cache(sciezka_cache)
+    brakujace = [f["id"] for f in fragmenty if str(f["id"]) not in cache]
+    if brakujace:
+        raise ValueError(f"brak embeddingów dla {len(brakujace)} fragmentów, uruchom embedding.py")
+    macierz = normalizuj_wektory([cache[str(f["id"])] for f in fragmenty])
+    return fragmenty, macierz
+
+
+def zbuduj_kontekst(trafienia, fragmenty):
+    czesci = []
+    for indeks, _ in trafienia:
+        fragment = fragmenty[indeks]
+        czesci.append(f"[strona {fragment['strona']}]\n{fragment['tekst']}")
+    return "\n\n".join(czesci)
+
+
+def zbuduj_prompt(pytanie, kontekst):
+    return f"Fragmenty regulaminu:\n\n{kontekst}\n\nPytanie: {pytanie}"
+
+
+def generuj_gemini(prompt):
+    wynik = z_ponawianiem(
+        lambda: klient().models.generate_content(
+            model=MODEL_GEN,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=SYSTEM,
+                temperature=0.1,
+            ),
         )
-
-def zapytaj(pytanie):
-    response=client.models.generate_content(
-        model=MODEL,
-        contents=f"FRAGMENT:\n{KONTEKST}\n\nPYTANIE: {pytanie}",
-        config=types.GenerateContentConfig(
-            system_instruction=SYSTEM,
-            temperature=0
-        ),
     )
-    return response.text
+    return wynik.text or ODMOWA
 
-def zapytaj_z_ponowieniem(pytanie, proby=5):
-    for i in range(proby):
+
+def odpowiedz(pytanie, fragmenty, macierz, embed=embed_pytanie, generuj=generuj_gemini, prog=PROG, k=K):
+    trafienia = szukaj(embed(pytanie), macierz, k)
+    dobre = [(indeks, podobienstwo) for indeks, podobienstwo in trafienia if podobienstwo >= prog]
+
+    if not dobre:
+        return {"odpowiedz": ODMOWA, "zrodla": [], "trafienia": trafienia}
+
+    tekst = generuj(zbuduj_prompt(pytanie, zbuduj_kontekst(dobre, fragmenty)))
+
+    if tekst.strip() == ODMOWA:
+        return {"odpowiedz": ODMOWA, "zrodla": [], "trafienia": trafienia}
+
+    strony = list(dict.fromkeys(fragmenty[indeks]["strona"] for indeks, _ in dobre))
+    return {"odpowiedz": tekst, "zrodla": strony, "trafienia": trafienia}
+
+
+if __name__ == "__main__":
+    fragmenty, macierz = wczytaj_indeks()
+    print("Wczytano", len(fragmenty), "fragmentów. Pusta linia kończy.\n")
+
+    while True:
         try:
-            return zapytaj(pytanie)
-        except errors.APIError as e:
-            if e.code in (429, 503) and i < proby - 1:
-                time.sleep(2 ** i)
-            else:
-                raise
+            pytanie = input("Pytanie: ").strip()
+        except (KeyboardInterrupt, EOFError):
+            break
+        if not pytanie:
+            break
+        wynik = odpowiedz(pytanie, fragmenty, macierz)
+        print("\n" + wynik["odpowiedz"])
+        if wynik["zrodla"]:
+            print("Źródła: strony", ", ".join(str(s) for s in wynik["zrodla"]))
+        print("Podobieństwa:", [round(p, 3) for _, p in wynik["trafienia"]], "\n")

@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "typ": "bezposrednie",
+    "pytanie": "Kto może dysponować środkami na rachunku?",
+    "strony": [],
+    "uwagi": "TODO: znajdź w PDF i wpisz numery stron"
+  },
+  {
+    "id": 2,
+    "typ": "bezposrednie",
+    "pytanie": "Jak ustanowić pełnomocnika do rachunku?",
+    "strony": [],
+    "uwagi": "TODO"
+  },
+  {
+    "id": 3,
+    "typ": "bezposrednie",
+    "pytanie": "W jaki sposób mogę wypowiedzieć umowę rachunku?",
+    "strony": [],
+    "uwagi": "TODO"
+  },
+  {
+    "id": 4,
+    "typ": "bezposrednie",
+    "pytanie": "Co się dzieje z rachunkiem po śmierci posiadacza?",
+    "strony": [],
+    "uwagi": "TODO"
+  },
+  {
+    "id": 5,
+    "typ": "bezposrednie",
+    "pytanie": "Czym jest silne uwierzytelnianie?",
+    "strony": [7],
+    "uwagi": "przykład uzupełniony: fragment o silnym uwierzytelnianiu jest na stronie 7"
+  },
+  {
+    "id": 6,
+    "typ": "parafraza",
+    "pytanie": "Jak potwierdzam swoją tożsamość przy transakcji?",
+    "strony": [],
+    "uwagi": "TODO: ta sama treść co pytanie 5, innymi słowami"
+  },
+  {
+    "id": 7,
+    "typ": "parafraza",
+    "pytanie": "Czy ktoś inny niż ja może wypłacić pieniądze z mojego konta?",
+    "strony": [],
+    "uwagi": "TODO: parafraza pytania 1"
+  },
+  {
+    "id": 8,
+    "typ": "liczba",
+    "pytanie": "W jakim terminie bank rozpatruje reklamację?",
+    "strony": [],
+    "uwagi": "TODO: pytanie z konkretną liczbą dni"
+  },
+  {
+    "id": 9,
+    "typ": "liczba",
+    "pytanie": "Ile wynosi okres wypowiedzenia umowy?",
+    "strony": [],
+    "uwagi": "TODO"
+  },
+  {
+    "id": 10,
+    "typ": "warunek",
+    "pytanie": "Czy bank może zmienić regulamin i co wtedy mogę zrobić?",
+    "strony": [],
+    "uwagi": "TODO"
+  },
+  {
+    "id": 11,
+    "typ": "warunek",
+    "pytanie": "Kiedy bank może zablokować dostęp do rachunku?",
+    "strony": [],
+    "uwagi": "TODO"
+  },
+  {
+    "id": 12,
+    "typ": "szczegolowe",
+    "pytanie": "Jak zgłosić utratę karty płatniczej?",
+    "strony": [],
+    "uwagi": "TODO"
+  },
+  {
+    "id": 13,
+    "typ": "szczegolowe",
+    "pytanie": "Czym są e-Doręczenia i jaki jest adres banku do doręczeń elektronicznych?",
+    "strony": [7],
+    "uwagi": "przykład uzupełniony: fragment o e-Doręczeniach jest na stronie 7"
+  },
+  {
+    "id": 14,
+    "typ": "szczegolowe",
+    "pytanie": "Czy mogę otworzyć rachunek dla dziecka?",
+    "strony": [],
+    "uwagi": "TODO"
+  },
+  {
+    "id": 15,
+    "typ": "szczegolowe",
+    "pytanie": "Jakie dane są potrzebne do otwarcia rachunku?",
+    "strony": [],
+    "uwagi": "TODO"
+  },
+  {
+    "id": 16,
+    "typ": "spoza",
+    "pytanie": "Jaka będzie jutro pogoda w Poznaniu?",
+    "strony": [],
+    "uwagi": "pytanie spoza dokumentu: oczekiwana odmowa"
+  },
+  {
+    "id": 17,
+    "typ": "spoza",
+    "pytanie": "Ile kosztuje dzisiaj bitcoin?",
+    "strony": [],
+    "uwagi": "pytanie spoza dokumentu: oczekiwana odmowa"
+  },
+  {
+    "id": 18,
+    "typ": "spoza",
+    "pytanie": "Jak ugotować rosół?",
+    "strony": [],
+    "uwagi": "pytanie spoza dokumentu: oczekiwana odmowa"
+  },
+  {
+    "id": 19,
+    "typ": "spoza-bankowe",
+    "pytanie": "Jakie jest oprocentowanie kredytu hipotecznego w tym banku?",
+    "strony": [],
+    "uwagi": "temat bankowy, ale poza tym regulaminem: oczekiwana odmowa (trudniejszy przypadek)"
+  },
+  {
+    "id": 20,
+    "typ": "spoza-bankowe",
+    "pytanie": "Jak założyć lokatę terminową na 12 miesięcy?",
+    "strony": [],
+    "uwagi": "temat bankowy, ale poza tym regulaminem: sprawdź w PDF, czy na pewno nie ma; jeśli jest, zmień typ i uzupełnij strony"
+  }
+]

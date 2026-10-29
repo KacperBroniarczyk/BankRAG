@@ -29,7 +29,7 @@ bez informacji spoza tekstu.
 ### Seria 1: 10 pytań, jeden fragment regulaminu
 
 **Warunki:** model `gemini-3.8-flash`, `temperature=0`, jedno uruchomienie każdego pytania,
-data uruchomienia: `21.10.2026`. Surowe wyniki: `wyniki_20261021_0943.json`.
+data uruchomienia: `21.10.2026`. Surowe wyniki: `wyniki_tydzien1/wyniki_20261021_0943.json`.
 
 | # | Typ | Pytanie | Oczekiwane | Wynik (skrót) | Ocena |
 |---|---|---|---|---|---|
@@ -49,7 +49,7 @@ data uruchomienia: `21.10.2026`. Surowe wyniki: `wyniki_20261021_0943.json`.
 ### Seria 2: te same pytania, po zmianie instrukcji systemowej
 
 **Warunki:** model `gemini-3.5-flash`, `temperature=0`, jedno uruchomienie każdego pytania,
-data uruchomienia: `21.10`. Surowe wyniki: `wyniki_20261021_1331.json` oraz `wyniki_20261021_1336.json`.
+data uruchomienia: `21.10`. Surowe wyniki: `wyniki_tydzien1/wyniki_20261021_1331.json` oraz `wyniki_tydzien1/wyniki_20261021_1336.json`.
 Zmiana względem serii 1: dopisane polecenie prostowania fałszywych założeń na podstawie tekstu
 (treść: `Jeśli pytanie którę Ci zadano nie jest poprawnie sformułowane postaraj się je naprostowac i odpowiedzieć na bazie podanego fragmentu.`).
 

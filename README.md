@@ -64,6 +64,9 @@ BankRAG/
 │   ├── testy_fragmenty.py    # testy etapu 2
 │   └── testy_embedding.py    # testy wyszukiwania (numpy)
 ├── sprawdz_asystenta.py      # ręczna kontrola asystenta na prawdziwym API (6 pytań)
+├── ocena.py                  # hit@1/3/5 i kalibracja progu na zbiorze pytań
+├── pytania_testowe.json      # zbiór pytań testowych z poprawnymi stronami
+├── dokumenty/                # mapa procesu, program ambasadorów, scenariusz wywiadu
 ├── 01_models.py              # lista modeli dostępnych dla klucza API
 ├── dane/
 │   └── decyzje_i_ryzyka.md   # dziennik decyzji, testów i ryzyk
