@@ -1,6 +1,6 @@
 # Scenariusz wywiadu: diagnoza potrzeb i potencjału AI
 
-**Szablon roboczy.** Do rozmowy z pracownikiem komórki biznesowej (oddział, obsługa klienta, back office). Czas: 45–60 minut. Cel: zrozumieć, jak wygląda praca i gdzie są straty czasu — **a nie sprzedać narzędzie AI**.
+**Szablon roboczy.** Do rozmowy z pracownikiem komórki biznesowej (oddział, obsługa klienta, back office). Czas: 45–60 minut. Cel: zrozumieć, jak wygląda praca i gdzie są straty czasu – **a nie sprzedać narzędzie AI**.
 
 ---
 
@@ -41,7 +41,7 @@
 2. Które zadania powtarzają się codziennie, a które pojawiają się rzadziej?
 3. Co w tej pracy jest najbardziej uciążliwe?
 
-### Część 2: Informacja i dokumenty (15 min) — tu zwykle leży temat
+### Część 2: Informacja i dokumenty (15 min) – tu zwykle leży temat
 
 4. Opowiedz o ostatniej sytuacji, w której musiałeś czegoś poszukać, żeby odpowiedzieć na pytanie. Czego dotyczyło i gdzie szukałeś?
 5. Ile to zajęło? Co zrobiłeś, gdy nie znalazłeś od razu?
@@ -58,12 +58,12 @@
 13. Jakich narzędzi używasz w ciągu dnia? Które z nich najbardziej Cię spowalniają?
 14. Gdybyś mógł zmienić jedną rzecz w swoich narzędziach, co by to było?
 
-### Część 4: AI (10 min) — dopiero teraz
+### Część 4: AI (10 min) – dopiero teraz
 
 15. Czy korzystałeś kiedyś z narzędzi typu ChatGPT, Gemini albo Copilot? W pracy czy prywatnie?
 16. *(jeśli tak)* Do czego? Co zadziałało, a co zawiodło?
 17. *(jeśli nie)* Co Cię powstrzymuje?
-18. Gdyby istniało narzędzie, które odpowiada na pytania o procedury i pokazuje, z której strony dokumentu pochodzi odpowiedź — co musiałoby się wydarzyć, żebyś mu zaufał?
+18. Gdyby istniało narzędzie, które odpowiada na pytania o procedury i pokazuje, z której strony dokumentu pochodzi odpowiedź – co musiałoby się wydarzyć, żebyś mu zaufał?
 19. Co by Cię zniechęciło do takiego narzędzia po pierwszym tygodniu?
 20. Czego takie narzędzie **nie powinno** robić?
 
@@ -123,18 +123,8 @@ DO SPRAWDZENIA / KOLEJNE OSOBY
 
 ## Po serii wywiadów (5–8 rozmów)
 
-1. **Zestaw powtarzające się motywy.** Problem wymieniony przez jedną osobę to anegdota, przez cztery — wzorzec.
+1. **Zestaw powtarzające się motywy.** Problem wymieniony przez jedną osobę to anegdota, przez cztery – wzorzec.
 2. **Policz częstotliwość razy czas.** Zadanie zajmujące 3 minuty, ale wykonywane 40 razy dziennie, jest ważniejsze niż półgodzinne robione raz w tygodniu.
 3. **Oceń każdą hipotezę w dwóch wymiarach:** wartość dla organizacji i wykonalność. Zacznij od wysokiej wartości i wysokiej wykonalności.
 4. **Odrzuć to, czego AI nie rozwiąże.** Część problemów to kwestia procesu, uprawnień albo integracji systemów. Nazwanie tego wprost buduje wiarygodność.
 5. **Wróć do rozmówców z podsumowaniem.** Ludzie, którzy zobaczą efekt swojej rozmowy, chętniej wezmą udział w pilotażu.
-
----
-
-## Jak to wykorzystać na rozmowie rekrutacyjnej
-
-Jeśli padnie pytanie „jak przeprowadziłbyś wywiad z pracownikiem?”, odpowiedz trzema rzeczami, a nie listą pytań:
-
-1. **Nie zaczynam od AI**, tylko od tego, jak wygląda praca, bo inaczej dostanę odpowiedzi, które ktoś uważa za oczekiwane.
-2. **Pytam o konkretne, ostatnie sytuacje**, bo ogólne pytania dają wyidealizowany obraz procesu.
-3. **Po serii rozmów liczę częstotliwość razy czas** i oddzielam to, co może rozwiązać AI, od tego, co jest problemem procesu.

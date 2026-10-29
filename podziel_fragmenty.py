@@ -2,8 +2,8 @@ import json
 import random
 
 PLIK_PDF = "Regulamin-kont-dla-klientow-indywidualnych-od-06.07.2026.pdf"
-ROZMIAR = 800       # maksymalna długość fragmentu w znakach
-NAKLADANIE = 100    # ile znaków ostatniego fragmentu powtarzamy w następnym
+ROZMIAR = 800
+NAKLADANIE = 100
 
 
 def podziel_na_fragmenty(tekst, rozmiar=ROZMIAR, nakladanie=NAKLADANIE):

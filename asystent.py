@@ -7,7 +7,6 @@ from embedding import embed_pytanie, klient, normalizuj_wektory, szukaj, wczytaj
 
 KATALOG = Path(__file__).parent
 MODEL_GEN = "gemini-3.5-flash"
-# próg z ocena.py (29.10): pytania nie na temat mają max 0.62, pytania z regulaminu min 0.69
 PROG = 0.65
 K = 3
 ODMOWA = "Nie znalazłem odpowiedzi na to pytanie w regulaminie."

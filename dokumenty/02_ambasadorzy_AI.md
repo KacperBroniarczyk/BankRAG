@@ -1,6 +1,6 @@
-# Program Ambasadorów AI — propozycja
+# Program Ambasadorów AI – propozycja
 
-**Szkic do dyskusji.** Dokument nie opisuje stanu faktycznego w SGB. Jest propozycją opartą na typowym układzie takich programów. Pola oznaczone *(do ustalenia)* wymagają informacji z organizacji. Przed użyciem sprawdź, czy podobny program już nie istnieje — jeśli tak, dokument powinien proponować jego rozwinięcie, a nie tworzenie od zera.
+**Szkic do dyskusji.** Dokument nie opisuje stanu faktycznego w SGB, tylko propozycję opartą na typowym układzie takich programów. Pola oznaczone *(do ustalenia)* wymagają informacji z organizacji. Jeśli podobny program już istnieje, to jest propozycja jego rozwinięcia, a nie budowy od zera.
 
 ---
 
@@ -21,7 +21,7 @@ Ambasador AI to osoba w komórce organizacyjnej, która jest pierwszym punktem k
 | Ograniczyć ryzykowne użycie | liczba zgłoszonych incydentów, wyniki krótkiej ankiety wiedzy | ciągle |
 | Przyspieszyć wybór projektów do wdrożenia | liczba pomysłów, które przeszły do prototypu | kwartalnie |
 
-Miary dobierz tak, żeby dało się je zebrać bez dodatkowej biurokracji. Jeśli pomiar wymaga nowego systemu, prawdopodobnie jest zły.
+Miary są dobrane tak, żeby dało się je zebrać bez dodatkowej biurokracji. Jeśli pomiar wymaga nowego systemu, prawdopodobnie jest zły.
 
 ---
 
@@ -92,7 +92,7 @@ Ta część wymaga zatwierdzenia przez dział prawny i bezpieczeństwa. Poniżej
 
 Rozporządzenie UE o sztucznej inteligencji (AI Act) nakłada na podmioty korzystające z systemów AI obowiązek zapewnienia odpowiedniego poziomu kompetencji AI wśród osób, które się nimi zajmują. Program ambasadorów jest jednym ze sposobów realizacji tego obowiązku i daje przy okazji udokumentowany ślad działań szkoleniowych.
 
-**Zweryfikuj aktualny stan przepisów i terminów przed powołaniem się na nie.** Daty wejścia w życie poszczególnych obowiązków były zmieniane, a ja nie mam możliwości sprawdzenia dzisiejszego stanu.
+Aktualny stan przepisów i terminy obowiązków trzeba sprawdzić przed wdrożeniem, bo daty wejścia w życie poszczególnych przepisów były zmieniane.
 
 ---
 
@@ -108,10 +108,10 @@ Rozporządzenie UE o sztucznej inteligencji (AI Act) nakłada na podmioty korzys
 
 ---
 
-## Czego potrzebuję, żeby dokończyć ten dokument
+## Otwarte pytania
 
 - [ ] czy podobny program już istnieje w SGB lub w Zrzeszeniu
 - [ ] które narzędzia AI są dziś dopuszczone do użytku
 - [ ] kto odpowiada za zgodność i bezpieczeństwo w tym obszarze
-- [ ] jaka jest skala organizacji (liczba komórek, oddziałów) — od tego zależy liczebność grupy
+- [ ] jaka jest skala organizacji (liczba komórek, oddziałów) – od tego zależy liczebność grupy
 - [ ] czy istnieje budżet na licencje i szkolenia

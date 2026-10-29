@@ -1,6 +1,6 @@
 # Mapa procesu: odpowiedź na pytanie klienta o warunki rachunku
 
-**Dokument roboczy (szkic).** Proces as-is opisany niżej jest **założeniem**, nie wynikiem obserwacji. Opiera się na typowym przebiegu obsługi w oddziale, a nie na danych z SGB. Przed użyciem w rozmowie o pracę zweryfikuj go — choćby w jednej rozmowie z osobą pracującą w banku — i zaznacz, co potwierdziłeś, a co nadal jest hipotezą. Liczby w tabeli „Czas i koszt” są **placeholderami do uzupełnienia**.
+**Dokument roboczy.** Proces as-is jest hipotezą opartą na typowym przebiegu obsługi w oddziale, a nie na danych z SGB. Do weryfikacji w wywiadach z pracownikami (`03_scenariusz_wywiadu.md`). Wartości w tabeli „Czas i koszt” są do uzupełnienia po pomiarach.
 
 | | |
 |---|---|
@@ -84,7 +84,7 @@ flowchart TD
 | Aktualizacja wiedzy | zależna od przepływu komunikatów | jedno ponowne zbudowanie indeksu |
 | Ślad decyzji | brak | wskazana strona, opcjonalnie log pytań |
 
-### Czego to NIE zmienia (ważne, powiedz o tym wprost)
+### Czego to nie zmienia
 
 - **Decyzję podejmuje człowiek.** Asystent proponuje odpowiedź i źródło, nie zastępuje pracownika.
 - **Krok weryfikacji zostaje.** Pominięcie go jest głównym ryzykiem procesu to-be, nie usprawnieniem.
@@ -94,7 +94,7 @@ flowchart TD
 
 ## 3. Czas i koszt (do uzupełnienia danymi z pilotażu)
 
-Nie wpisuj tu liczb, których nie zmierzyłeś. Tabela służy do pokazania, **co** byś mierzył.
+Tabela pokazuje, co i jak mierzyć. Wartości zostaną wpisane dopiero po pomiarach.
 
 | miara | as-is | to-be | jak zmierzyć |
 |---|---|---|---|
@@ -131,7 +131,7 @@ Nie wpisuj tu liczb, których nie zmierzyłeś. Tabela służy do pokazania, **c
 
 ---
 
-## 6. Co trzeba uzupełnić przed pokazaniem tego dokumentu
+## 6. Do uzupełnienia
 
 - [ ] zweryfikować proces as-is w rozmowie z osobą z banku i oznaczyć, co potwierdzone
 - [ ] wpisać właściciela procesu i uczestników pilotażu

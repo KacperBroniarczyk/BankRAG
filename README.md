@@ -4,7 +4,7 @@
 
 Projekt RAG (Retrieval-Augmented Generation) napisany od podstaw w Pythonie: własne czyszczenie PDF, dzielenie na fragmenty, wyszukiwanie wektorowe na `numpy` (bez gotowych frameworków typu LangChain czy baz wektorowych) i generowanie odpowiedzi przez Gemini API.
 
-> Status: działa w wersji konsolowej i w przeglądarce (Streamlit). Jakość wyszukiwania zmierzona na 20 pytaniach (hit@3 = 100%), próg odmowy skalibrowany. Kod gotowy do przejścia na Vertex AI i Cloud Run, samo wdrożenie jeszcze nie wykonane. Szczegóły w sekcji [Plan rozwoju](#plan-rozwoju).
+> Status: działa w wersji konsolowej i w przeglądarce (Streamlit). Jakość wyszukiwania zmierzona na 20 pytaniach (hit@3 = 100%), próg odmowy skalibrowany. Wdrożony na Cloud Run z Vertex AI (region UE, dostęp tylko po zalogowaniu). Szczegóły w sekcji [Plan rozwoju](#plan-rozwoju).
 
 ---
 
@@ -202,9 +202,9 @@ Pełny dziennik decyzji, wyników testów i ryzyk: [`dane/decyzje_i_ryzyka.md`](
 - **Inne słowa w pytaniu i w dokumencie:** na pytanie „Jak mogę wypowiedzieć umowę rachunku?” wyszukiwanie znajduje właściwą stronę (34), ale nie fragment z odpowiedzią, bo regulamin mówi o „umowie ramowej”. Model wtedy poprawnie odmawia. Możliwa poprawka: wyszukiwanie hybrydowe (słowa kluczowe + wektory) albo dopisanie nagłówka rozdziału do każdego fragmentu.
 - **Ocena na poziomie stron:** hit@k sprawdza, czy znaleziono właściwą *stronę*, a nie właściwy *fragment*, więc trochę zawyża wynik (przykład wyżej liczy się jako trafienie).
 - **Załączniki:** regulamin odsyła do załączników (np. nr 2 o kartach), których nie ma w indeksie.
-- **Dane osobowe (RODO):** asystent jest przeznaczony do pytań o procedury, a nie o konkretnych klientów. Pytania nie powinny zawierać danych klientów, bo trafiają do zewnętrznego API. W środowisku produkcyjnym: Vertex AI w regionie UE, logowanie i kontrola dostępu.
+- **Dane osobowe (RODO):** asystent jest przeznaczony do pytań o procedury, a nie o konkretnych klientów. Pytania nie powinny zawierać danych klientów, bo trafiają do zewnętrznego API. Wersja na Cloud Run używa Vertex AI w regionie UE (Frankfurt) i jest dostępna tylko po zalogowaniu.
 - **AI Act:** system wspiera pracownika, a nie podejmuje decyzji wobec klienta. Odpowiedź zawsze wymaga weryfikacji w źródle przez człowieka.
-- **Darmowy plan API:** limity na minutę i na dzień. W produkcji płatny plan lub Vertex AI.
+- **Darmowy plan API (AI Studio):** limity na minutę i 20 zapytań do modelu dziennie. Na Vertex AI tego limitu nie ma, ale każde zapytanie kosztuje (grosze).
 
 ## Plan rozwoju
 
@@ -261,4 +261,6 @@ Python · NumPy · pypdf · google-genai (Gemini API / Vertex AI) · Streamlit �
 
 ## Autor
 
-<!-- TODO: imię i nazwisko, link do LinkedIn -->
+Kacper Broniarczyk | LinkedIn: www.linkedin.com/in/kacper-broniarczyk-a83328284
+
+

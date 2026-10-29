@@ -2,7 +2,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-# uruchamia po kolei wszystkie pliki testy_*.py z tego katalogu
 katalog = Path(__file__).parent
 bledy = 0
 

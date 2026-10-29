@@ -69,8 +69,6 @@ def klient():
     global _klient
     if _klient is None:
         try:
-            # certyfikaty z systemu (Windows), tak samo jak w app.py
-            # bez tego skrypty konsolowe kończą się CERTIFICATE_VERIFY_FAILED
             import truststore
 
             truststore.inject_into_ssl()
@@ -78,8 +76,6 @@ def klient():
             pass
         load_dotenv()
         if os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "").lower() == "true":
-            # Vertex AI na Google Cloud: zamiast klucza API konto usługi,
-            # region w GOOGLE_CLOUD_LOCATION; europe-west3 (Frankfurt), bo w Warszawie nie ma gemini-3.5-flash
             _klient = genai.Client(
                 vertexai=True,
                 project=os.getenv("GOOGLE_CLOUD_PROJECT"),

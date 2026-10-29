@@ -1,7 +1,6 @@
 import streamlit as st
 
 try:
-    # certyfikaty z systemu (Windows), bez tego połączenie z API kończy się CERTIFICATE_VERIFY_FAILED
     import truststore
 
     truststore.inject_into_ssl()
@@ -78,7 +77,6 @@ if pytanie:
             try:
                 wynik = odpowiedz(pytanie, fragmenty, macierz, prog=prog, k=k)
             except errors.APIError as e:
-                # 429 = limit zapytań, pokazuję krótki komunikat zamiast całego JSON-a z API
                 if e.code == 429:
                     st.error("Wyczerpany limit zapytań do API (darmowy plan). Spróbuj później.")
                 else:

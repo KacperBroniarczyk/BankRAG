@@ -2,12 +2,10 @@ import re
 from collections import Counter
 from pypdf import PdfReader
 
-# Ustawienia
 SCIEZKA_PDF = "Regulamin-kont-dla-klientow-indywidualnych-od-06.07.2026.pdf"
-PROG = 0.5   # linia musi być na co najmniej 50% stron, żeby uznać ją za stałą
-ILE = 2      # ile linii od góry i od dołu strony sprawdzamy (minimum 1)
+PROG = 0.5
+ILE = 2
 
-# Wczytanie
 def wczytaj_strony(plik):
     teksty = []
     odczyt = PdfReader(plik)
@@ -20,7 +18,6 @@ def wczytaj_strony(plik):
 
     return teksty
 
-# Funkcje pomocnicze
 def normalizacja(linia):
     return re.sub(r"\d+", "", linia).strip()
 
@@ -34,7 +31,6 @@ def indeksy_strefy(linie, ile):
     koniec = niepuste[-ile:]
     return set(poczatek + koniec)
 
-# Przebieg 1: liczenie (nic nie zmienia w tekście)
 def znajdz_stale_linie(teksty, prog, ile):
     licznik = Counter()
 
@@ -57,7 +53,6 @@ def znajdz_stale_linie(teksty, prog, ile):
 
     return stale
 
-# Przebieg 2: czyszczenie jednej strony
 def usun_stale_linie(tekst, strefa, stale):
     wynik = []
     linie = tekst.split("\n")
@@ -86,12 +81,11 @@ def wyczysc_strone(tekst, stale, ile):
     tekst = uporzadkuj_biale_znaki(tekst)
     return tekst
 
-# Całość
 def wyczysc_dokument(teksty, prog=PROG, ile=ILE):
-    stale = znajdz_stale_linie(teksty, prog, ile)   # przebieg 1, raz na dokument
+    stale = znajdz_stale_linie(teksty, prog, ile)
 
     strony = []
-    for numer, tekst in enumerate(teksty, start=1):  # przebieg 2, strona po stronie
+    for numer, tekst in enumerate(teksty, start=1):
         oczyszczony = wyczysc_strone(tekst, stale, ile)
         strony.append({"strona": numer, "tekst": oczyszczony})
 

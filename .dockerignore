@@ -1,4 +1,3 @@
-# co NIE trafia do obrazu przy "docker build" (ta sama lista co w .gcloudignore)
 .env
 .venv/
 .idea/

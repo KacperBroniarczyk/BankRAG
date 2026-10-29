@@ -5,12 +5,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from podziel_fragmenty import podziel_na_fragmenty, podziel_strony
 
-# puste i krótkie teksty
 assert podziel_na_fragmenty("") == []
 assert podziel_na_fragmenty("   ") == []
 assert podziel_na_fragmenty("krótki tekst") == ["krótki tekst"]
 
-# mały przykład: rozmiar 20, zakładka 5
 t = "aaaa bbbb cccc dddd eeee ffff gggg hhhh iiii jjjj"
 assert podziel_na_fragmenty(t, 20, 5) == [
     "aaaa bbbb cccc dddd",
@@ -18,7 +16,6 @@ assert podziel_na_fragmenty(t, 20, 5) == [
     "gggg hhhh iiii jjjj",
 ]
 
-# własności: nic nie jest za długie, nic nie ginie, zakładka istnieje
 t2 = " ".join(["slowo%02d" % i for i in range(30)])
 fr = podziel_na_fragmenty(t2, 60, 15)
 assert len(fr) == 6
@@ -29,21 +26,17 @@ for poprzedni, nastepny in zip(fr, fr[1:]):
 assert fr[0].startswith("slowo00")
 assert fr[-1].endswith("slowo29")
 
-# tekst bez spacji (nie wolno wpaść w nieskończoną pętlę)
 assert podziel_na_fragmenty("x" * 50, 20, 5) == ["x" * 20] * 3
 
-# jedna spacja na początku, potem długi wyraz (dolna granica rfind)
 assert podziel_na_fragmenty("ab " + "x" * 60, 20, 5)[0] == "ab " + "x" * 17
 assert all(f != "" for f in podziel_na_fragmenty("ab " + "x" * 60, 20, 5))
 
-# zła konfiguracja
 try:
     podziel_na_fragmenty("abc", 10, 5)
     assert False, "powinien być ValueError"
 except ValueError:
     pass
 
-# podziel_strony: pusta strona pomijana, id kolejne, numer strony oryginalny
 strony = [
     {"strona": 1, "tekst": "Konto jest bezpłatne."},
     {"strona": 2, "tekst": ""},
@@ -54,7 +47,6 @@ assert podziel_strony(strony, "a.pdf", 800, 100) == [
     {"id": 2, "zrodlo": "a.pdf", "strona": 3, "tekst": "Drugi tekst."},
 ]
 
-# dwie strony: start zaczyna od zera na każdej stronie
 dluga = " ".join(["slowo%02d" % i for i in range(30)])
 dwie = [{"strona": 1, "tekst": dluga}, {"strona": 2, "tekst": dluga}]
 wynik = podziel_strony(dwie, "b.pdf", 60, 15)

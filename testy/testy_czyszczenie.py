@@ -21,34 +21,26 @@ STRONY = [
 ]
 STALE = {"Regulamin", "Strona"}
 
-# normalizacja
 assert normalizacja("Strona 12 z 40") == "Strona  z"
 assert normalizacja("7") == ""
 assert normalizacja("  Art. 5 ust. 2  ") == "Art.  ust."
 
-# indeksy_strefy
 assert indeksy_strefy(["a", "", "b", "c", "d"], 1) == {0, 4}
 assert indeksy_strefy(["a", "b", "c"], 2) == {0, 1, 2}
 
-# znajdz_stale_linie
 assert znajdz_stale_linie(STRONY, 0.5, 2) == STALE
 
-# usun_stale_linie
 tekst = STRONY[0]
 strefa = indeksy_strefy(tekst.split("\n"), 2)
 assert usun_stale_linie(tekst, strefa, STALE) == "Tresc A\nTresc B"
 
-# sklej_dzielone_wyrazy
 assert sklej_dzielone_wyrazy("wpły-\nwach") == "wpływach"
 assert sklej_dzielone_wyrazy("a - b") == "a - b"
 
-# uporzadkuj_biale_znaki
 assert uporzadkuj_biale_znaki("  Konto   jest\nbezpłatne \n") == "Konto jest bezpłatne"
 
-# wyczysc_strone
 assert wyczysc_strone(STRONY[0], STALE, 2) == "Tresc A Tresc B"
 
-# wyczysc_dokument
 wynik, stale = wyczysc_dokument(STRONY, 0.5, 2)
 assert stale == STALE
 assert wynik[0] == {"strona": 1, "tekst": "Tresc A Tresc B"}

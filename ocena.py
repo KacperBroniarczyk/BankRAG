@@ -1,13 +1,3 @@
-"""Ocena jakości wyszukiwania: hit@k i kalibracja progu odrzucania.
-
-Uruchomienie:
-    python ocena.py                 # pełna ocena (liczy embeddingi pytań, używa cache)
-    python ocena.py --bez-api       # tylko raport z poprzedniego uruchomienia
-
-Zbiór pytań: pytania_testowe.json (lista słowników). Dla pytań spoza regulaminu
-pole "strony" jest pustą listą.
-"""
-
 import argparse
 import json
 import sys
@@ -41,13 +31,10 @@ def wczytaj_pytania(sciezka=PLIK_PYTAN):
 
 
 def czy_spoza(pytanie):
-    """Pytanie spoza dokumentu rozpoznajemy po typie, a nie po pustej liście stron:
-    pusta lista oznacza też pytanie, któremu jeszcze nie wpisano stron."""
     return pytanie.get("typ", "").startswith("spoza")
 
 
 def wektory_pytan(pytania, embed=embed_pytanie, sciezka_cache=CACHE_PYTAN, przerwa_s=PRZERWA_S):
-    """Embedding każdego pytania, z cache po treści pytania (nie po id)."""
     cache = wczytaj_cache(sciezka_cache)
     nowe = 0
 
@@ -62,8 +49,6 @@ def wektory_pytan(pytania, embed=embed_pytanie, sciezka_cache=CACHE_PYTAN, przer
 
 
 def oceny_pytania(pytanie, wektor, fragmenty, macierz, max_k=max(POZIOMY_K)):
-    """Jedno pytanie -> trafienia, trafione strony i informacja, na którym miejscu
-    pojawiła się pierwsza poprawna strona (None, gdy nie ma jej w top max_k)."""
     trafienia = szukaj(wektor, macierz, max_k)
     strony = [fragmenty[indeks]["strona"] for indeks, _ in trafienia]
     podobienstwa = [podobienstwo for _, podobienstwo in trafienia]
@@ -89,7 +74,6 @@ def oceny_pytania(pytanie, wektor, fragmenty, macierz, max_k=max(POZIOMY_K)):
 
 
 def hit_at_k(oceny, k):
-    """Odsetek pytań, dla których poprawna strona jest w pierwszych k wynikach."""
     if not oceny:
         return None
     trafione = sum(1 for o in oceny if o["miejsce_pierwszego_trafienia"] is not None
@@ -98,10 +82,6 @@ def hit_at_k(oceny, k):
 
 
 def kalibruj_prog(w_dokumencie, spoza):
-    """Najniższe podobieństwo pytań z dokumentu vs najwyższe pytań spoza.
-
-    Zwraca też proponowany próg: środek przedziału między tymi wartościami,
-    o ile zbiory się nie nakładają."""
     najlepsze_w = [o["najlepsze_podobienstwo"] for o in w_dokumencie]
     najlepsze_spoza = [o["najlepsze_podobienstwo"] for o in spoza]
 
@@ -124,7 +104,6 @@ def kalibruj_prog(w_dokumencie, spoza):
 
 
 def bledy_przy_progu(w_dokumencie, spoza, prog):
-    """Ile pytań z dokumentu próg by odrzucił i ile pytań spoza by przepuścił do modelu."""
     odrzucone = [o["id"] for o in w_dokumencie if o["najlepsze_podobienstwo"] < prog]
     przepuszczone = [o["id"] for o in spoza if o["najlepsze_podobienstwo"] >= prog]
     return {"prog": prog, "odrzucone_z_dokumentu": odrzucone, "przepuszczone_spoza": przepuszczone}
