@@ -216,7 +216,7 @@ Pełny dziennik decyzji, wyników testów i ryzyk: [`dane/decyzje_i_ryzyka.md`](
 - [x] Zbiór 20 pytań testowych, miary hit@1 / hit@3 / hit@5, kalibracja progu
 - [x] Testy asystenta: pytania spoza dokumentu, z fałszywym założeniem, z liczbami
 - [x] Kod przygotowany pod Vertex AI i Cloud Run (`Dockerfile` sprawdzony lokalnie, przełącznik w `.env`)
-- [ ] Wdrożenie na Cloud Run (wymaga projektu GCP z rozliczeniami)
+- [x] Wdrożenie na Cloud Run (region `europe-west3`, dostęp tylko po zalogowaniu)
 - [x] Dokumentacja biznesowa: mapa procesu as-is / to-be, metryki sukcesu (`dokumenty/`, szkic do weryfikacji)
 - [ ] Więcej dokumentów (taryfa, załączniki do regulaminu) z datą obowiązywania przy każdym źródle
 
@@ -248,6 +248,12 @@ gcloud run deploy bankrag --source . --region europe-west3 --no-allow-unauthenti
 - `--no-allow-unauthenticated`: aplikacja nie jest publiczna, dostęp tylko dla zalogowanych kont z uprawnieniem.
 - `.gcloudignore` jest potrzebny, bo bez niego `gcloud` użyłby `.gitignore` i nie wysłałby `fragmenty.json` i `embeddingi.json`. `.env` i PDF nie są wysyłane.
 - Konto usługi Cloud Run potrzebuje roli `Vertex AI User`.
+
+Otwieranie wdrożonej aplikacji (adres bez logowania zwraca 403, tunel `gcloud` loguje Twoim kontem):
+```bash
+gcloud run services proxy bankrag --region europe-west3
+```
+Potem http://localhost:8080 w przeglądarce. W PowerShellu zamiast `gcloud` wpisuj `gcloud.cmd`.
 
 ## Technologie
 

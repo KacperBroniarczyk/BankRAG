@@ -190,7 +190,7 @@ Drugi przebieg 29.10 (po zmianie progu i pytań): pytania 1–6 dały te same wy
 - Uruchomić `sprawdz_asystenta.py` po odnowieniu limitu (nowe pytania: 90 dni, atak w pytaniu).
 - Wyszukiwanie hybrydowe (słowa kluczowe + wektory) albo nagłówek rozdziału dopisany do każdego fragmentu i sprawdzenie, czy naprawia pytanie 3.
 - Ocena na poziomie fragmentów (oczekiwane id fragmentów w `pytania_testowe.json`).
-- Wdrożenie na Cloud Run i porównanie podobieństw na Vertex AI z wynikami z AI Studio.
+- ~~Wdrożenie na Cloud Run i porównanie podobieństw na Vertex AI z wynikami z AI Studio.~~ Zrobione 29.10, opis niżej.
 
 ### Ryzyka (nowe w tygodniu 2)
 
@@ -200,3 +200,22 @@ Drugi przebieg 29.10 (po zmianie progu i pytań): pytania 1–6 dały te same wy
 | Pytania bankowe spoza zakresu przechodzą przez próg | **Tak** (pytania 12, 19 w ocenie) | Instrukcja systemowa jako druga blokada; w serii 3 zadziałała |
 | Brak załączników do regulaminu w indeksie | **Tak** (pytanie o utratę karty) | Opisane w README; kolejny krok: więcej dokumentów |
 | Dzienny limit API przerywa testy | **Tak** (429, drugi przebieg) | Zapis częściowych wyników, błąd w osobnym polu |
+
+### Wdrożenie na Google Cloud (29.10)
+
+| Data  | Decyzja | Dlaczego | Alternatywy |
+|-------|---|---|---|
+| 29.10 | Vertex AI zamiast klucza z AI Studio (`.env`: `GOOGLE_GENAI_USE_VERTEXAI=true`) | Brak klucza API w kodzie i kontenerze, dane w regionie UE, brak dziennego limitu 20 zapytań | Zostać przy AI Studio (darmowe, ale limit i brak kontroli regionu) |
+| 29.10 | Region `europe-west3` (Frankfurt) | W `europe-central2` (Warszawa) nie ma `gemini-3.5-flash` (błąd 404), jest tylko model embeddingów. Sprawdzone regiony UE: model generujący działa tylko w `europe-west3` i `global` | `global` (brak gwarancji, że dane zostaną w UE) |
+| 29.10 | Gotowy `embeddingi.json` bez przeliczania | Na Vertex AI podobieństwa wyszły identyczne jak w AI Studio (0.815 / 0.783 / 0.76 dla pytania kontrolnego) | Przeliczenie całego indeksu |
+| 29.10 | Cloud Run z `--no-allow-unauthenticated` | Aplikacja nie jest publiczna: adres bez logowania zwraca 403, dostęp przez `gcloud run services proxy` | Publiczny adres (każdy mógłby zużywać budżet) |
+| 29.10 | Domyślne konto usługi Compute z rolą `Vertex AI User` | Najprostsze na prototyp | Osobne konto usługi z minimalnymi uprawnieniami (lepsze w produkcji) |
+
+**Wynik:** usługa `bankrag` działa (rewizja `bankrag-00001-8ph`). Pytanie kontrolne „Kto może dysponować pieniędzmi na koncie?” przez tunel: poprawna odpowiedź ze stronami 13 i 21.
+
+**Problem po drodze:** `gcloud` zgłaszał `CERTIFICATE_VERIFY_FAILED` (ten sam powód co w Pythonie: certyfikat podmieniany na tym komputerze). Rozwiązanie: plik z certyfikatami z Windows ustawiony w `core/custom_ca_certs_file`.
+
+| Ryzyko | Czy zaobserwowane? | Jak ograniczam |
+|---|---|---|
+| Koszty w chmurze | Nie (pojedyncze zapytania) | Alert budżetu, Cloud Run skaluje do zera, dostęp tylko po zalogowaniu |
+| Zbyt szerokie uprawnienia konta usługi | Ryzyko, nie incydent | W produkcji osobne konto usługi tylko z rolą `Vertex AI User` |
