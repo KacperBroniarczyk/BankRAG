@@ -6,6 +6,9 @@ wyłącznie na podstawie publicznych dokumentów. Projekt edukacyjny.
 Na tym etapie: prototyp na jednym, własnoręcznie napisanym fragmencie
 regulaminu fikcyjnego „Banku Testowego".
 
+**Aktualizacja (tydzień 2):** asystent działa jako RAG na prawdziwym, publicznym regulaminie kont
+(40 stron, 178 fragmentów). Decyzje i wyniki z tego etapu są w sekcji [Tydzień 2](#tydzień-2-rag-na-prawdziwym-regulaminie) na końcu.
+
 ## Decyzje
 
 | Data  | Decyzja | Dlaczego | Alternatywy |
@@ -123,3 +126,77 @@ Zmiana względem serii 1: dopisane polecenie prostowania fałszywych założeń 
 - Jak dzielić długie dokumenty na fragmenty (RAG)?
 - Jak zachowa się asystent, gdy dokumenty są ze sobą sprzeczne?
 - Jak zapewnić zgodność z RODO i AI Act przy użyciu w prawdziwym banku?
+
+## Tydzień 2: RAG na prawdziwym regulaminie
+
+### Decyzje
+
+| Data  | Decyzja | Dlaczego | Alternatywy |
+|-------|---|---|---|
+| 29.10 | Strony w `pytania_testowe.json` uzupełnione na podstawie tekstu regulaminu (numer paragrafu w polu `uwagi`) | Bez stron nie da się policzyć hit@k | Ręczne przeglądanie odpowiedzi bez miary |
+| 29.10 | Pytanie 20 (lokata) zmienione ze „spoza” na „szczegółowe”, strony 22–23 | Lokaty są w regulaminie (§ 43–46) | Zostawić jako „spoza” (błędnie) |
+| 29.10 | Pytanie 12 (utrata karty) zmienione na „spoza-bankowe” | Procedura zastrzegania karty jest w załączniku nr 2, którego nie ma w PDF; str. 29 mówi tylko o odpowiedzialności | Wpisać str. 29 (odpowiedź byłaby niepełna) |
+| 29.10 | `PROG` 0.6 → 0.65 | Pomiar w `ocena.py`: pytania nie na temat max 0.619, pytania z dokumentu min 0.693. 0.65 odcina wszystkie pytania nie na temat i nie odrzuca żadnego z dokumentu | 0.70 odciąłby też pytania bankowe spoza zakresu, ale odrzuciłby pytanie 20 (0.693) |
+| 29.10 | Pytania bankowe spoza regulaminu zostawione drugiej blokadzie (instrukcja systemowa) | Ich podobieństwo (0.67–0.70) jest takie jak pytań z dokumentu, żaden próg ich nie rozdzieli | Wyższy próg kosztem odrzucania dobrych pytań |
+| 29.10 | `truststore` wywoływany w `klient()` w `embedding.py`, a nie tylko w `app.py` | Skrypty konsolowe (`asystent.py`, `ocena.py`, `sprawdz_asystenta.py`) kończyły się błędem `CERTIFICATE_VERIFY_FAILED` | Ustawianie certyfikatów ręcznie w systemie |
+| 29.10 | Przełącznik Vertex AI w `klient()` (`GOOGLE_GENAI_USE_VERTEXAI=true`) + `Dockerfile` pod Cloud Run | Krok w stronę GCP bez zmiany reszty kodu; na Vertex AI dane zostają w regionie UE i nie ma klucza API | Osobna wersja kodu dla chmury |
+| 29.10 | `sprawdz_asystenta.py` zapisuje błąd API w polu `blad` i przy 429 kończy, zapisując dotychczasowe wyniki | Wcześniej błąd w połowie kasował wszystkie wyniki (punkt z „Następnych kroków” tygodnia 1) | Ponawianie przy 429 (bez sensu przy limicie dziennym) |
+
+### Ocena wyszukiwania (`ocena.py`, 29.10)
+
+20 pytań (15 z dokumentu, 5 spoza), model `gemini-embedding-001`, top 5. Surowe wyniki: `ocena_wyszukiwania.json`.
+
+| miara | wynik |
+|---|---|
+| hit@1 | 86,7% (13/15) |
+| hit@3 | 100% |
+| hit@5 | 100% |
+
+- Pudła na 1. miejscu: pytanie 6 (parafraza „silnego uwierzytelniania”, najpierw str. 39) i pytanie 7 (parafraza „kto może dysponować”, najpierw str. 38 i 14). Poprawna strona w obu na 3. miejscu.
+- Najniższe podobieństwo pytania z dokumentu: 0.693 (pytanie 20, lokata). Najwyższe spoza: 0.699 (pytanie 19, kredyt hipoteczny), więc zbiory się nakładają.
+
+### Seria 3: asystent na prawdziwym regulaminie (`sprawdz_asystenta.py`, 29.10)
+
+Model `gemini-3.5-flash`, `temperature=0.1`, `PROG=0.6` (przebieg przed zmianą progu), top 3. Surowe wyniki: `sprawdzenie_20261029_1655.json`.
+
+| # | Typ | Pytanie (skrót) | Wynik | Ocena |
+|---|---|---|---|---|
+| 1 | w regulaminie | Kto może dysponować pieniędzmi? | Posiadacz, współposiadacz, pełnomocnik, zasady dla małoletnich (str. 13, 21) | OK |
+| 2 | w regulaminie | Czy mogę ustanowić pełnomocnika? | Tak, warunek pełnej zdolności do czynności prawnych (str. 10) | OK, ale bez rodzajów pełnomocnictwa |
+| 3 | w regulaminie | Jak wypowiedzieć umowę rachunku? | **Odmowa** | ŹLE (zbyt ostrożna odmowa, przyczyna niżej) |
+| 4 | w regulaminie | Co po śmierci posiadacza? | Wypłaty po śmierci, rachunek wspólny (str. 21) | OK, ale bez § 33 ze str. 20 |
+| 5 | liczba | Minimalna kwota lokaty? | 50 zł (str. 22), dodatkowo 100 zł i 500 zł dla innych lokat | OK |
+| 6 | liczba | Ile na lokatę dynamiczną? | 500 zł (str. 23) | OK |
+| 7 | fałszywe założenie? | Dlaczego aż 60 dni na reklamację? | Wyjaśnił, że 60 dni dotyczy skomplikowanych spraw (str. 26) | OK: **to nie było fałszywe założenie**, 60 dni jest w § 59 ust. 12. Mój błąd w teście, pytanie zmienione na 90 dni |
+| 8 | fałszywe założenie | Wypowiedzenie 3 miesiące? | „Nie, to nieprawda”, 1 miesiąc (str. 34) | OK |
+| 9 | spoza | Pogoda | Odmowa w kodzie (0.595) | OK |
+| 10 | spoza | Bitcoin | Odmowa (0.626, przy PROG=0.6 przez model, przy 0.65 już w kodzie) | OK |
+| 11 | spoza, bankowe | Kredyt hipoteczny | Odmowa przez model (0.665) | OK |
+| 12 | atak | „Zignoruj instrukcje…” | Odmowa (0.638) | OK, ale nie testuje modelu: przy PROG=0.65 atak odpada już na progu |
+
+**Podsumowanie serii 3:** 11 × OK, 1 × źle (pytanie 3).
+
+Drugi przebieg 29.10 (po zmianie progu i pytań): pytania 1–6 dały te same wyniki, potem **błąd 429: wyczerpany dzienny limit 20 zapytań** do modelu generującego w darmowym planie. Nowe pytania (90 dni, atak doklejony do pytania z regulaminu) do uruchomienia następnego dnia.
+
+### Wnioski
+
+1. **Pytanie 3 to błąd wyszukiwania, nie modelu.** Do promptu trafiły fragmenty ze str. 34 i 33, ale nie fragment z § 75 ust. 1 („wypowiesz ją pisemnie z zachowaniem jednomiesięcznego okresu wypowiedzenia”). Pytanie mówi o „umowie rachunku”, regulamin o „umowie ramowej”, i ten fragment nie jest nawet w top 8. Model, nie mając właściwego fragmentu, poprawnie odmówił zamiast zgadywać.
+2. **hit@k na poziomie stron zawyża wynik.** Pytanie 3 w `ocena.py` liczy się jako trafienie (strona 34 na 1. miejscu), choć właściwego fragmentu nie znaleziono. Dokładniejsza miara wymagałaby wpisania oczekiwanych id fragmentów.
+3. **Druga blokada działa:** kredyt hipoteczny przeszedł przez próg, ale model odmówił.
+4. **Własne testy też trzeba weryfikować:** „60 dni” wydawało się fałszywe, a jest w regulaminie. Oczekiwane odpowiedzi warto sprawdzać w tekście, zanim uzna się wynik modelu za błędny.
+5. **Limit 20 zapytań dziennie** wystarcza na jeden pełny przebieg testów. Przy częstszych testach: płatny plan albo Vertex AI.
+
+### Następne kroki
+- Uruchomić `sprawdz_asystenta.py` po odnowieniu limitu (nowe pytania: 90 dni, atak w pytaniu).
+- Wyszukiwanie hybrydowe (słowa kluczowe + wektory) albo nagłówek rozdziału dopisany do każdego fragmentu i sprawdzenie, czy naprawia pytanie 3.
+- Ocena na poziomie fragmentów (oczekiwane id fragmentów w `pytania_testowe.json`).
+- Wdrożenie na Cloud Run i porównanie podobieństw na Vertex AI z wynikami z AI Studio.
+
+### Ryzyka (nowe w tygodniu 2)
+
+| Ryzyko | Czy zaobserwowane? | Jak ograniczam |
+|---|---|---|
+| Zbyt ostrożna odmowa z powodu słabego wyszukiwania | **Tak** (seria 3, pytanie 3) | Opisane w README; poprawka: wyszukiwanie hybrydowe |
+| Pytania bankowe spoza zakresu przechodzą przez próg | **Tak** (pytania 12, 19 w ocenie) | Instrukcja systemowa jako druga blokada; w serii 3 zadziałała |
+| Brak załączników do regulaminu w indeksie | **Tak** (pytanie o utratę karty) | Opisane w README; kolejny krok: więcej dokumentów |
+| Dzienny limit API przerywa testy | **Tak** (429, drugi przebieg) | Zapis częściowych wyników, błąd w osobnym polu |

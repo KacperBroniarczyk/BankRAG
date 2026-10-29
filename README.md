@@ -4,7 +4,7 @@
 
 Projekt RAG (Retrieval-Augmented Generation) napisany od podstaw w Pythonie: własne czyszczenie PDF, dzielenie na fragmenty, wyszukiwanie wektorowe na `numpy` (bez gotowych frameworków typu LangChain czy baz wektorowych) i generowanie odpowiedzi przez Gemini API.
 
-> Status: działa w wersji konsolowej (pytanie → odpowiedź ze stroną albo odmowa). W trakcie: interfejs Streamlit, ocena jakości (hit@k), wdrożenie na Google Cloud. Szczegóły w sekcji [Plan rozwoju](#plan-rozwoju).
+> Status: działa w wersji konsolowej i w przeglądarce (Streamlit). Jakość wyszukiwania zmierzona na 20 pytaniach (hit@3 = 100%), próg odmowy skalibrowany. Kod gotowy do przejścia na Vertex AI i Cloud Run, samo wdrożenie jeszcze nie wykonane. Szczegóły w sekcji [Plan rozwoju](#plan-rozwoju).
 
 ---
 
@@ -59,17 +59,24 @@ BankRAG/
 ├── podziel_fragmenty.py      # etap 2: strony → fragmenty.json
 ├── embedding.py              # etap 3: fragmenty → embeddingi.json + wyszukiwanie
 ├── asystent.py               # etap 4: pytanie → odpowiedź ze źródłem lub odmowa
+├── app.py                    # interfejs Streamlit (czat w przeglądarce)
 ├── testy/
+│   ├── uruchom_testy.py      # uruchamia wszystkie testy po kolei
 │   ├── testy_czyszczenie.py  # testy etapu 1
 │   ├── testy_fragmenty.py    # testy etapu 2
-│   └── testy_embedding.py    # testy wyszukiwania (numpy)
-├── sprawdz_asystenta.py      # ręczna kontrola asystenta na prawdziwym API (6 pytań)
+│   ├── testy_embedding.py    # testy wyszukiwania (numpy)
+│   ├── testy_asystent.py     # testy asystenta z atrapami zamiast Gemini
+│   └── testy_ocena.py        # testy miar hit@k, progu i zbioru pytań
+├── sprawdz_asystenta.py      # ręczna kontrola asystenta na prawdziwym API (13 pytań)
 ├── ocena.py                  # hit@1/3/5 i kalibracja progu na zbiorze pytań
 ├── pytania_testowe.json      # zbiór pytań testowych z poprawnymi stronami
 ├── dokumenty/                # mapa procesu, program ambasadorów, scenariusz wywiadu
-├── 01_models.py              # lista modeli dostępnych dla klucza API
 ├── dane/
-│   └── decyzje_i_ryzyka.md   # dziennik decyzji, testów i ryzyk
+│   ├── decyzje_i_ryzyka.md   # dziennik decyzji, testów i ryzyk
+│   ├── ocena_wyszukiwania.json  # wynik ostatniego uruchomienia ocena.py
+│   └── sprawdzenie_*.json    # wyniki sprawdz_asystenta.py
+├── Dockerfile                # obraz dla Cloud Run
+├── .gcloudignore             # co nie trafia do Cloud Build (patrz niżej)
 ├── requirements.txt
 ├── .env                      # klucz API (nie w repozytorium)
 └── README.md
@@ -95,7 +102,7 @@ Plik `.env` w katalogu projektu:
 GEMINI_API_KEY=twoj_klucz
 ```
 
-Dokument źródłowy: pobierz regulamin `Regulamin-kont-dla-klientow-indywidualnych-od-06.07.2026.pdf` ze strony banku (<!-- TODO: link do źródła i data pobrania -->) i umieść go w katalogu projektu.
+Dokument źródłowy: pobierz regulamin `Regulamin-kont-dla-klientow-indywidualnych-od-06.07.2026.pdf` ze strony banku ([link](https://www.pgbs.pobiedziska.sgb.pl/wp-content/uploads/2026/05/Regulamin-kont-dla-klientow-indywidualnych-od-06.07.2026.pdf), pobrany 21.10.2026) i umieść go w katalogu projektu.
 
 **Budowa indeksu (raz):**
 ```bash
@@ -125,16 +132,42 @@ Czat w przeglądarce (http://localhost:8501): odpowiedź z numerami stron, podgl
 ## Testy
 
 ```bash
-python testy/testy_czyszczenie.py
-python testy/testy_fragmenty.py
-python testy/testy_embedding.py
+python testy/uruchom_testy.py
 ```
-Testy nie wymagają klucza API ani internetu. Warstwa API jest oddzielona od logiki: funkcje przyjmują funkcję embeddingu i generowania jako parametr, więc w testach podstawiane są atrapy zamiast prawdziwego Gemini.
+Uruchamia wszystkie pliki `testy/testy_*.py` (każdy można też odpalić osobno). Testy nie wymagają klucza API ani internetu. Warstwa API jest oddzielona od logiki: funkcje przyjmują funkcję embeddingu i generowania jako parametr, więc w testach podstawiane są atrapy zamiast prawdziwego Gemini.
 
 Co sprawdzają m.in.:
 - usuwanie stałych linii tylko ze strefy brzegowej strony, sklejanie dzielonych wyrazów,
 - normalizację wektorów (długość 1, błąd dla wektora zerowego),
-- poprawność rankingu wyszukiwania i niezależność od skali wektora pytania.
+- poprawność rankingu wyszukiwania i niezależność od skali wektora pytania,
+- asystenta: poniżej progu odmowa **bez wywołania modelu**, do promptu trafiają tylko fragmenty powyżej progu, przy odmowie modelu brak źródeł,
+- miary hit@k, kalibrację progu oraz to, że każde pytanie testowe z dokumentu ma wpisane strony.
+
+## Ocena jakości
+
+**Wyszukiwanie** (`python ocena.py`, 20 pytań z `pytania_testowe.json`: 15 z dokumentu, 5 spoza, wynik w `dane/ocena_wyszukiwania.json`):
+
+| miara | wynik |
+|---|---|
+| hit@1 (poprawna strona na 1. miejscu) | 86,7% (13/15) |
+| hit@3 (poprawna strona w top 3, tyle trafia do modelu) | 100% (15/15) |
+| hit@5 | 100% |
+
+Oba pudła na 1. miejscu to parafrazy (pytania 6 i 7): poprawna strona była na 3. miejscu. Uwaga: miara liczy trafienie strony, nie fragmentu (patrz [Ograniczenia](#ograniczenia-i-ryzyka)).
+
+**Kalibracja progu:**
+
+| grupa pytań | najlepsze podobieństwo |
+|---|---|
+| z dokumentu | min 0,693, średnio 0,760 |
+| spoza, nie na temat (pogoda, bitcoin, rosół) | max 0,619 |
+| spoza, ale bankowe (kredyt hipoteczny, utrata karty*) | 0,672 i 0,699 |
+
+Pytania bankowe spoza regulaminu nachodzą na pytania z dokumentu, więc żaden próg nie rozdzieli ich bezbłędnie. Wybrany próg **0,65**: odcina wszystkie pytania nie na temat i nie odrzuca żadnego pytania z dokumentu. Pytania bankowe spoza zakresu przechodzą do modelu i tam zatrzymuje je druga blokada (instrukcja systemowa).
+
+\* procedura zastrzegania karty jest w załączniku nr 2 do regulaminu, którego nie ma w indeksowanym PDF.
+
+**Odpowiedzi asystenta** (`python sprawdz_asystenta.py`, 13 pytań na prawdziwym API, w tym liczby, fałszywe założenia i próby ataku): w ostatniej pełnej serii 11 z 12 zachowań zgodnych z oczekiwaniami, jedna zbyt ostrożna odmowa spowodowana wyszukiwaniem (opis w [Ograniczeniach](#ograniczenia-i-ryzyka)). Szczegóły w [`dane/decyzje_i_ryzyka.md`](dane/decyzje_i_ryzyka.md).
 
 ## Kluczowe decyzje techniczne
 
@@ -159,13 +192,16 @@ Pełny dziennik decyzji, wyników testów i ryzyk: [`dane/decyzje_i_ryzyka.md`](
 | liczba fragmentów | 178 |
 | model embeddingów | `gemini-embedding-001`, 768 wymiarów |
 | model generowania | `gemini-3.5-flash` |
-| top-k / próg | 3 / 0.6 (próg tymczasowy, do kalibracji na zbiorze pytań testowych) |
+| top-k / próg | 3 / 0.65 (próg skalibrowany na zbiorze pytań testowych, patrz [Ocena jakości](#ocena-jakości)) |
 
 ## Ograniczenia i ryzyka
 
 - **Liczby i przeczenia:** embeddingi słabo rozróżniają „powyżej 2000 zł” od „poniżej 2000 zł”. Wyszukiwanie znajdzie właściwy fragment, ale za poprawność warunku odpowiada model generujący, dlatego numery stron są obowiązkowe.
 - **Jeden dokument:** indeks obejmuje obecnie jeden regulamin. Wiele dokumentów wymaga rozróżniania wersji i dat obowiązywania.
-- **Próg odrzucania** jest na razie ustawiony ręcznie, a nie wyznaczony z pomiarów.
+- **Próg odrzucania** wyznaczony na 20 pytaniach. To mała próba: pytania bankowe spoza regulaminu mają podobieństwo takie jak pytania z dokumentu, więc dla nich działa tylko druga blokada (instrukcja systemowa).
+- **Inne słowa w pytaniu i w dokumencie:** na pytanie „Jak mogę wypowiedzieć umowę rachunku?” wyszukiwanie znajduje właściwą stronę (34), ale nie fragment z odpowiedzią, bo regulamin mówi o „umowie ramowej”. Model wtedy poprawnie odmawia. Możliwa poprawka: wyszukiwanie hybrydowe (słowa kluczowe + wektory) albo dopisanie nagłówka rozdziału do każdego fragmentu.
+- **Ocena na poziomie stron:** hit@k sprawdza, czy znaleziono właściwą *stronę*, a nie właściwy *fragment*, więc trochę zawyża wynik (przykład wyżej liczy się jako trafienie).
+- **Załączniki:** regulamin odsyła do załączników (np. nr 2 o kartach), których nie ma w indeksie.
 - **Dane osobowe (RODO):** asystent jest przeznaczony do pytań o procedury, a nie o konkretnych klientów. Pytania nie powinny zawierać danych klientów, bo trafiają do zewnętrznego API. W środowisku produkcyjnym: Vertex AI w regionie UE, logowanie i kontrola dostępu.
 - **AI Act:** system wspiera pracownika, a nie podejmuje decyzji wobec klienta. Odpowiedź zawsze wymaga weryfikacji w źródle przez człowieka.
 - **Darmowy plan API:** limity na minutę i na dzień. W produkcji płatny plan lub Vertex AI.
@@ -177,14 +213,34 @@ Pełny dziennik decyzji, wyników testów i ryzyk: [`dane/decyzje_i_ryzyka.md`](
 - [x] Wyszukiwanie wektorowe na `numpy`
 - [x] Asystent z odpowiedzią ze źródłem i odmową poniżej progu
 - [x] Interfejs Streamlit
-- [ ] Zbiór 15–20 pytań testowych, miary hit@1 / hit@3 / hit@5, kalibracja progu
-- [ ] Testy asystenta: pytania spoza dokumentu, z fałszywym założeniem, z liczbami
-- [ ] Przejście na Vertex AI (Google Cloud) i wdrożenie na Cloud Run
-- [ ] Dokumentacja biznesowa: mapa procesu as-is / to-be, metryki sukcesu
+- [x] Zbiór 20 pytań testowych, miary hit@1 / hit@3 / hit@5, kalibracja progu
+- [x] Testy asystenta: pytania spoza dokumentu, z fałszywym założeniem, z liczbami
+- [x] Kod przygotowany pod Vertex AI i Cloud Run (`Dockerfile`, przełącznik w `.env`)
+- [ ] Wdrożenie na Cloud Run (wymaga projektu GCP z rozliczeniami)
+- [x] Dokumentacja biznesowa: mapa procesu as-is / to-be, metryki sukcesu (`dokumenty/`, szkic do weryfikacji)
+- [ ] Więcej dokumentów (taryfa, załączniki do regulaminu) z datą obowiązywania przy każdym źródle
+
+## Wdrożenie na Google Cloud (Vertex AI + Cloud Run)
+
+Ten sam kod działa z Gemini API (klucz z AI Studio) albo z Vertex AI. Przełącznik w `.env` lub w zmiennych środowiskowych:
+```
+GOOGLE_GENAI_USE_VERTEXAI=true
+GOOGLE_CLOUD_PROJECT=id-projektu
+GOOGLE_CLOUD_LOCATION=europe-central2
+```
+Na Vertex AI nie ma klucza API: uwierzytelnia konto usługi (lokalnie `gcloud auth application-default login`), a dane zostają w wybranym regionie UE. Embeddingi są liczone tym samym modelem (`gemini-embedding-001`), więc gotowy `embeddingi.json` powinien pasować bez przeliczania (do sprawdzenia przy pierwszym uruchomieniu: podobieństwa w `ocena.py` powinny wyjść takie same).
+
+Wdrożenie na Cloud Run (z katalogu projektu, po zbudowaniu indeksu):
+```bash
+gcloud run deploy bankrag --source . --region europe-central2 --no-allow-unauthenticated --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=id-projektu,GOOGLE_CLOUD_LOCATION=europe-central2
+```
+- `--no-allow-unauthenticated`: aplikacja nie jest publiczna, dostęp tylko dla zalogowanych kont z uprawnieniem.
+- `.gcloudignore` jest potrzebny, bo bez niego `gcloud` użyłby `.gitignore` i nie wysłałby `fragmenty.json` i `embeddingi.json`. `.env` i PDF nie są wysyłane.
+- Konto usługi Cloud Run potrzebuje roli `Vertex AI User`.
 
 ## Technologie
 
-Python · NumPy · pypdf · google-genai (Gemini API) · python-dotenv
+Python · NumPy · pypdf · google-genai (Gemini API / Vertex AI) · Streamlit · python-dotenv · Docker · Google Cloud Run
 
 ## Autor
 

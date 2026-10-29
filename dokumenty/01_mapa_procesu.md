@@ -126,6 +126,7 @@ Nie wpisuj tu liczb, których nie zmierzyłeś. Tabela służy do pokazania, **c
 | Zakres dokumentów | jeden regulamin kont dla klientów indywidualnych |
 | Uczestnicy | *(do ustalenia: np. 5–8 pracowników z 2 oddziałów)* |
 | Kryterium sukcesu | *(do ustalenia po pierwszych pomiarach, np. trafność wyszukiwania na poziomie ustalonym w ocenie oraz brak odpowiedzi niezgodnych z regulaminem w audycie próbki)* |
+| Punkt odniesienia (prototyp, 29.10) | wyszukiwanie: hit@1 = 86,7%, hit@3 = 100% na 15 pytaniach z regulaminu; wszystkie 3 pytania nie na temat odrzucone progiem (szczegóły: `dane/ocena_wyszukiwania.json`). Mała próba, pytania pisane przez autora, a nie przez pracowników |
 | Decyzja po pilotażu | rozszerzyć zakres dokumentów / poprawić / zatrzymać |
 
 ---
@@ -135,4 +136,4 @@ Nie wpisuj tu liczb, których nie zmierzyłeś. Tabela służy do pokazania, **c
 - [ ] zweryfikować proces as-is w rozmowie z osobą z banku i oznaczyć, co potwierdzone
 - [ ] wpisać właściciela procesu i uczestników pilotażu
 - [ ] uzupełnić miary po pierwszych pomiarach
-- [ ] dodać wyniki oceny wyszukiwania (hit@k) jako punkt odniesienia dla kryterium sukcesu
+- [x] dodać wyniki oceny wyszukiwania (hit@k) jako punkt odniesienia dla kryterium sukcesu

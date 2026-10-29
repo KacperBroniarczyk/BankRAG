@@ -16,7 +16,7 @@ from pathlib import Path
 
 import numpy as np
 
-from asystent import wczytaj_indeks
+from asystent import PROG, wczytaj_indeks
 from embedding import embed_pytanie, szukaj, wczytaj_cache, zapisz_cache
 
 KATALOG = Path(__file__).parent
@@ -123,7 +123,14 @@ def kalibruj_prog(w_dokumencie, spoza):
     return wynik
 
 
-def raport(oceny, pytania):
+def bledy_przy_progu(w_dokumencie, spoza, prog):
+    """Ile pytań z dokumentu próg by odrzucił i ile pytań spoza by przepuścił do modelu."""
+    odrzucone = [o["id"] for o in w_dokumencie if o["najlepsze_podobienstwo"] < prog]
+    przepuszczone = [o["id"] for o in spoza if o["najlepsze_podobienstwo"] >= prog]
+    return {"prog": prog, "odrzucone_z_dokumentu": odrzucone, "przepuszczone_spoza": przepuszczone}
+
+
+def raport(oceny, pytania, prog=PROG):
     spoza = [o for o in oceny if o["spoza"]]
     w_dokumencie = [o for o in oceny if not o["spoza"] and o["oczekiwane_strony"]]
     bez_stron = [o for o in oceny if not o["spoza"] and not o["oczekiwane_strony"]]
@@ -135,6 +142,7 @@ def raport(oceny, pytania):
         "bez_wpisanych_stron": [o["id"] for o in bez_stron],
         "hit": {f"hit@{k}": hit_at_k(w_dokumencie, k) for k in POZIOMY_K},
         "prog": kalibruj_prog(w_dokumencie, spoza),
+        "obecny_prog": bledy_przy_progu(w_dokumencie, spoza, prog),
         "nietrafione": [
             {"id": o["id"], "pytanie": o["pytanie"],
              "oczekiwane": o["oczekiwane_strony"], "znalezione": o["znalezione_strony"]}
@@ -169,6 +177,11 @@ def wypisz(wynik):
         print(f"  zbiory rozdzielone -> proponowany PROG = {prog['proponowany_prog']}")
     elif prog["rozdzielone"] is False:
         print("  UWAGA: zbiory się nakładają, żaden próg nie rozdzieli ich bezbłędnie")
+
+    obecny = wynik["obecny_prog"]
+    print(f"  przy obecnym PROG = {obecny['prog']}: "
+          f"odrzucone z dokumentu {obecny['odrzucone_z_dokumentu']}, "
+          f"przepuszczone spoza {obecny['przepuszczone_spoza']}")
 
     if wynik["nietrafione"]:
         print("-" * 72)

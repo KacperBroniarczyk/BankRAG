@@ -3,29 +3,29 @@
     "id": 1,
     "typ": "bezposrednie",
     "pytanie": "Kto może dysponować środkami na rachunku?",
-    "strony": [],
-    "uwagi": "TODO: znajdź w PDF i wpisz numery stron"
+    "strony": [13],
+    "uwagi": "§ 17 ust. 1: posiadacz, współposiadacz, pełnomocnik"
   },
   {
     "id": 2,
     "typ": "bezposrednie",
     "pytanie": "Jak ustanowić pełnomocnika do rachunku?",
-    "strony": [],
-    "uwagi": "TODO"
+    "strony": [10, 11],
+    "uwagi": "§ 9-12: forma pełnomocnictwa, rodzaje, podpis w placówce"
   },
   {
     "id": 3,
     "typ": "bezposrednie",
     "pytanie": "W jaki sposób mogę wypowiedzieć umowę rachunku?",
-    "strony": [],
-    "uwagi": "TODO"
+    "strony": [34],
+    "uwagi": "§ 75 ust. 1 pkt 1: pisemnie, z jednomiesięcznym okresem wypowiedzenia"
   },
   {
     "id": 4,
     "typ": "bezposrednie",
     "pytanie": "Co się dzieje z rachunkiem po śmierci posiadacza?",
-    "strony": [],
-    "uwagi": "TODO"
+    "strony": [20, 21],
+    "uwagi": "§ 33 dyspozycja wkładem na wypadek śmierci (str. 20), § 34 wypłaty po śmierci (str. 21)"
   },
   {
     "id": 5,
@@ -38,50 +38,50 @@
     "id": 6,
     "typ": "parafraza",
     "pytanie": "Jak potwierdzam swoją tożsamość przy transakcji?",
-    "strony": [],
-    "uwagi": "TODO: ta sama treść co pytanie 5, innymi słowami"
+    "strony": [7],
+    "uwagi": "parafraza pytania 5: słownik, hasło 'silne uwierzytelnianie'"
   },
   {
     "id": 7,
     "typ": "parafraza",
     "pytanie": "Czy ktoś inny niż ja może wypłacić pieniądze z mojego konta?",
-    "strony": [],
-    "uwagi": "TODO: parafraza pytania 1"
+    "strony": [13, 10],
+    "uwagi": "parafraza pytania 1: § 17 (str. 13) i pełnomocnictwo § 10 (str. 10)"
   },
   {
     "id": 8,
     "typ": "liczba",
     "pytanie": "W jakim terminie bank rozpatruje reklamację?",
-    "strony": [],
-    "uwagi": "TODO: pytanie z konkretną liczbą dni"
+    "strony": [26],
+    "uwagi": "§ 59 ust. 11: 15 dni roboczych (usługi płatnicze), 30 dni kalendarzowych (pozostałe)"
   },
   {
     "id": 9,
     "typ": "liczba",
     "pytanie": "Ile wynosi okres wypowiedzenia umowy?",
-    "strony": [],
-    "uwagi": "TODO"
+    "strony": [34],
+    "uwagi": "§ 75 ust. 1: klient 1 miesiąc, bank 2 miesiące"
   },
   {
     "id": 10,
     "typ": "warunek",
     "pytanie": "Czy bank może zmienić regulamin i co wtedy mogę zrobić?",
-    "strony": [],
-    "uwagi": "TODO"
+    "strony": [32, 33],
+    "uwagi": "§ 73 kiedy bank może zmienić regulamin (koniec str. 32), § 74 sprzeciw i wypowiedzenie (str. 33)"
   },
   {
     "id": 11,
     "typ": "warunek",
     "pytanie": "Kiedy bank może zablokować dostęp do rachunku?",
-    "strony": [],
-    "uwagi": "TODO"
+    "strony": [38, 39],
+    "uwagi": "§ 90: blokada konta, wstrzymanie transakcji, upadłość konsumencka"
   },
   {
     "id": 12,
-    "typ": "szczegolowe",
+    "typ": "spoza-bankowe",
     "pytanie": "Jak zgłosić utratę karty płatniczej?",
     "strony": [],
-    "uwagi": "TODO"
+    "uwagi": "procedura zgłaszania utraty karty jest w załączniku nr 2, którego nie ma w PDF; str. 29 (§ 66-67) mówi tylko o odpowiedzialności po zastrzeżeniu: oczekiwana odmowa lub odpowiedź częściowa"
   },
   {
     "id": 13,
@@ -94,15 +94,15 @@
     "id": 14,
     "typ": "szczegolowe",
     "pytanie": "Czy mogę otworzyć rachunek dla dziecka?",
-    "strony": [],
-    "uwagi": "TODO"
+    "strony": [9, 13],
+    "uwagi": "§ 4 ust. 3-5 konta dla małoletnich (str. 9), § 17 ust. 2-4 kto dysponuje (str. 13)"
   },
   {
     "id": 15,
     "typ": "szczegolowe",
     "pytanie": "Jakie dane są potrzebne do otwarcia rachunku?",
-    "strony": [],
-    "uwagi": "TODO"
+    "strony": [9],
+    "uwagi": "§ 6-7: podpis, dokument tożsamości, sprawdzenie PESEL"
   },
   {
     "id": 16,
@@ -134,9 +134,9 @@
   },
   {
     "id": 20,
-    "typ": "spoza-bankowe",
+    "typ": "szczegolowe",
     "pytanie": "Jak założyć lokatę terminową na 12 miesięcy?",
-    "strony": [],
-    "uwagi": "temat bankowy, ale poza tym regulaminem: sprawdź w PDF, czy na pewno nie ma; jeśli jest, zmień typ i uzupełnij strony"
+    "strony": [22, 23],
+    "uwagi": "sprawdzone w PDF: lokaty są w regulaminie (§ 43-46, minimalna kwota 50 zł), ale nie ma tam konkretnej oferty na 12 miesięcy"
   }
 ]

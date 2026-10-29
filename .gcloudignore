@@ -1,0 +1,13 @@
+# co NIE trafia do Cloud Build przy "gcloud run deploy --source ."
+# bez tego pliku gcloud użyłby .gitignore i pominąłby fragmenty.json i embeddingi.json
+.env
+.venv/
+.idea/
+.claude/
+.git/
+__pycache__/
+*.pdf
+embeddingi_pytan.json
+dane/
+dokumenty/
+testy/

@@ -1,0 +1,12 @@
+# co NIE trafia do obrazu przy "docker build" (ta sama lista co w .gcloudignore)
+.env
+.venv/
+.idea/
+.claude/
+.git/
+__pycache__/
+*.pdf
+embeddingi_pytan.json
+dane/
+dokumenty/
+testy/
