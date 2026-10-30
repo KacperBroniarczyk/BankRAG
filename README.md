@@ -264,3 +264,5 @@ Python · NumPy · pypdf · google-genai (Gemini API / Vertex AI) · Streamlit �
 Kacper Broniarczyk | LinkedIn: www.linkedin.com/in/kacper-broniarczyk-a83328284
 
 
+
+Większość projektu (pipeline, ocena, dokumenty biznesowe, wdrożenie) zrobiłem sam. Przy obsłudze części bibliotek (google-genai, truststore) i konfiguracji gcloud pomagał mi Claude (Anthropic).
